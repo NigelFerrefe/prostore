@@ -5,14 +5,20 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Home" 
 }; */
-import sampleData from '@/db/sample-data'
 import ProductList from '@/components/ui/shared/product/product-list';
+import { getLatestProducts } from '@/lib/actions/product.actions';
 
 
-
-const Homepage = () => {
+const Homepage = async () => {
+  const latestProducts = await getLatestProducts();
+  const mappedProducts = latestProducts.map(product => ({
+    ...product,
+    price: product.price.toString(),
+    createdAt: product.createdAd, // map createdAd to createdAt
+    rating: typeof product.rating === 'number' ? product.rating : Number(product.rating), // ensure rating is a number
+  }));
   return ( <>
-  <ProductList data={sampleData.products} title='Newest Arrivals' limit={4} />
+  <ProductList data={mappedProducts} title='Newest Arrivals' limit={4} />
   </>  );
 }
  
