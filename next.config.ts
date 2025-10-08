@@ -6,8 +6,6 @@ const nextConfig: NextConfig = {
       ignored: [
         '**/node_modules/**',
         '**/.git/**',
-        'C:/Users/Nigel/Application Data/**',
-        'C:\\Users\\Nigel\\Application Data\\**',
       ],
     };
     return config;
