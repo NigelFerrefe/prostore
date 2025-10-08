@@ -124,7 +124,7 @@ export async function getMyCart() {
       path: "/",
       httpOnly: true,
       sameSite: "lax", // o "none" si es cross-site
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       maxAge: 60 * 60 * 24 * 30,
     });
   }
