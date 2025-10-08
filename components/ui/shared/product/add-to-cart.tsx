@@ -7,7 +7,6 @@ import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { addItemToCart, removeItemFromCart } from "@/lib/actions/cart-actions";
 import { useTransition } from "react";
-import { start } from "repl";
 
 const AddToCard = ({ item, cart }: { item: CartItem; cart?: Cart }) => {
   const router = useRouter();
