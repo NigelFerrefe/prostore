@@ -8,7 +8,6 @@ import { prisma } from "@/db/prisma";
 import { cartItemSchema, insertCartSchema } from "../validators";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
-import { randomUUID } from "crypto";
 
 //Calculate cart prices
 const calcPrice = (items: CartItem[]) => {
@@ -117,17 +116,8 @@ export async function addItemToCart(data: CartItem) {
 
 export async function getMyCart() {
   //Check for card cookie
-  let sessionCartId = (await cookies()).get("sessionCartId")?.value;
-  if (!sessionCartId) {
-    sessionCartId = randomUUID();
-    (await cookies()).set("sessionCartId", sessionCartId, {
-      path: "/",
-      httpOnly: true,
-      sameSite: "lax", // o "none" si es cross-site
-      secure: true,
-      maxAge: 60 * 60 * 24 * 30,
-    });
-  }
+  const sessionCartId = (await cookies()).get("sessionCartId")?.value;
+  if (!sessionCartId) throw new Error("Cart session not found");
   //Get session and user ID
   const session = await auth();
   const userId = session?.user?.id ? (session.user.id as string) : undefined;

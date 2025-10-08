@@ -16,7 +16,8 @@ const ProductDetailsPage = async (props: {
 
   const product = await getProductBySlug(slug);
   if (!product) notFound();
-
+  
+  await fetch("/api/cart");
   const cart = await getMyCart()
 
   return (
