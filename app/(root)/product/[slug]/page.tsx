@@ -8,17 +8,19 @@ import Image from "next/image";
 import ProductImages from "@/components/ui/shared/product/product-images";
 import AddToCard from "@/components/ui/shared/product/add-to-cart";
 import { getMyCart } from "@/lib/actions/cart-actions";
+import { cookies } from "next/headers";
 
 const ProductDetailsPage = async (props: {
   params: Promise<{ slug: string }>;
 }) => {
   const { slug } = await props.params;
-
+  const cookieStore = await cookies();
+  const sessionCartId = cookieStore.get("sessionCartId")?.value;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
-  
-  await fetch("/api/cart");
-  const cart = await getMyCart()
+
+
+  const cart = await getMyCart(sessionCartId!)
 
   return (
     <section>

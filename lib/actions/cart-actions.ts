@@ -8,6 +8,8 @@ import { prisma } from "@/db/prisma";
 import { cartItemSchema, insertCartSchema } from "../validators";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { randomUUID } from "crypto";
+import { ensureCartSession } from "./cart-session";
 
 //Calculate cart prices
 const calcPrice = (items: CartItem[]) => {
@@ -28,14 +30,14 @@ const calcPrice = (items: CartItem[]) => {
 export async function addItemToCart(data: CartItem) {
   try {
     //Check for card cookie
-    const sessionCartId = (await cookies()).get("sessionCartId")?.value;
-    if (!sessionCartId) throw new Error("Cart session not found");
+    const sessionCartId = await ensureCartSession();
+
     //Get session and user ID
     const session = await auth();
     const userId = session?.user?.id ? (session.user.id as string) : undefined;
 
     //Get cart
-    const cart = await getMyCart();
+    const cart = await getMyCart(sessionCartId);
     //parse and validate item
     const item = cartItemSchema.parse(data);
 
@@ -114,10 +116,10 @@ export async function addItemToCart(data: CartItem) {
   }
 }
 
-export async function getMyCart() {
+export async function getMyCart(sessionCartId?: string) {
   //Check for card cookie
-  const sessionCartId = (await cookies()).get("sessionCartId")?.value;
-  if (!sessionCartId) throw new Error("Cart session not found");
+  //const sessionCartId = (await cookies()).get("sessionCartId")?.value;
+  if (!sessionCartId) return undefined;
   //Get session and user ID
   const session = await auth();
   const userId = session?.user?.id ? (session.user.id as string) : undefined;
@@ -151,7 +153,7 @@ export async function removeItemFromCart(productId: string) {
     if (!product) throw new Error("Product not found");
 
     //get the user cart
-    const cart = await getMyCart();
+    const cart = await getMyCart(sessionCartId);
     if (!cart) throw new Error("Cart not found");
 
     //check item
