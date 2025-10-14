@@ -7,6 +7,7 @@ import {
   insertOrderSchema,
   insertOrderItemSchema,
   paymentResultSchema,
+  updateProfileSchema,
 } from "@/lib/validators";
 
 export type Product = z.infer<typeof insertProductsSchema> & {

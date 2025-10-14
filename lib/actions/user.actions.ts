@@ -5,6 +5,7 @@ import {
   signInFormSchema,
   signUpFormSchema,
   paymentMethodsSchema,
+  updateProfileSchema,
 } from "../validators";
 import { auth, signIn, signOut } from "@/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
@@ -137,6 +138,30 @@ export async function updateUserPaymentMethod(
     await prisma.user.update({
       where: { id: currentUser.id },
       data: { paymentMethod: paymentMethod.type },
+    });
+    return {
+      success: true,
+      message: "User updated successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: formatError(error),
+    };
+  }
+}
+
+//Update user Profile
+export async function updateProfile(data: z.infer<typeof updateProfileSchema>) {
+  try {
+    const session = await auth();
+    const currentUser = await prisma.user.findFirst({
+      where: { id: session?.user?.id },
+    });
+    if (!currentUser) throw new Error("User not found");
+    await prisma.user.update({
+      where: { id: currentUser.id },
+      data: { name: data.name },
     });
     return {
       success: true,
