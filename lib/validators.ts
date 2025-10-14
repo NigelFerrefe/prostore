@@ -4,10 +4,9 @@ import { PAYMENT_METHODS } from "./constants";
 
 const currency = z
   .string()
-  .transform((val) => Number(val))
   .refine(
-    (value) => /^\d+(\.\d{2})?$/.test(formatNumberWithDecimal(value)),
-    "Price must have exactly two decimals places"
+    (value) => /^\d+(\.\d{2})?$/.test(formatNumberWithDecimal(Number(value))),
+    'Price must have exactly two decimal places'
   );
 
 // Schema for inserting products
