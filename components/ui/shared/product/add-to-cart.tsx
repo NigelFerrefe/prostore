@@ -67,7 +67,7 @@ const AddToCard = ({ item, cart }: { item: CartItem; cart?: Cart }) => {
         )}
       </Button>
 
-      <span className="px-2">{existingItem.quantity}</span>
+      <span className="px-2">{existingItem.qty}</span>
 
       <Button type="button" variant="outline" onClick={handleAddToCart}>
         {isPending ? (

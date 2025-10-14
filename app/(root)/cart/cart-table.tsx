@@ -84,7 +84,7 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
                           <Minus className="h-4 w-4" />
                         )}
                       </Button>
-                      <span>{item.quantity}</span>
+                      <span>{item.qty}</span>
                       <Button
                         disabled={isPending}
                         variant="outline"
@@ -120,7 +120,7 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
               <div className="pb-3 text-xl">
                 Subtotal(
                 {cart.items.reduce(
-                  (acc, item) => acc + item.quantity,
+                  (acc, item) => acc + item.qty,
                   0
                 )}):{" "}
                 <span className="font-bold">

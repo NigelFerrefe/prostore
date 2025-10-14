@@ -2,7 +2,12 @@
 
 import { cookies } from "next/headers";
 import { CartItem } from "@/types";
-import { convertToPlainObject, formatError, round2 } from "../utils";
+import {
+  convertToPlainObject,
+  formatError,
+  formatNumberWithDecimal,
+  round2,
+} from "../utils";
 import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { cartItemSchema, insertCartSchema } from "../validators";
@@ -14,7 +19,7 @@ import { ensureCartSession } from "./cart-session";
 //Calculate cart prices
 const calcPrice = (items: CartItem[]) => {
   const itemsPrice = round2(
-      items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0)
+      items.reduce((acc, item) => acc + Number(item.price) * item.qty, 0)
     ),
     shippingPrice = round2(itemsPrice > 100 ? 0 : 10),
     taxPrice = round2(0.15 * itemsPrice),
@@ -46,6 +51,8 @@ export async function addItemToCart(data: CartItem) {
       where: { id: item.productId },
     });
     if (!product) throw new Error("Product not found");
+    item.price = formatNumberWithDecimal(Number(product.price));
+
     if (!cart) {
       //Create new cart
       const newCart = insertCartSchema.parse({
@@ -75,13 +82,13 @@ export async function addItemToCart(data: CartItem) {
 
       if (existingItem) {
         //check stock
-        if (product.stock < existingItem.quantity + 1) {
+        if (product.stock < existingItem.qty + 1) {
           throw new Error(`Only ${product.stock} items in stock`);
         }
         //increase quantity
         (cart.items as CartItem[]).find(
           (x) => x.productId === item.productId
-        )!.quantity = existingItem.quantity + 1;
+        )!.qty = existingItem.qty + 1;
       } else {
         //If item does not exists in cart
         //Check stock
@@ -98,6 +105,7 @@ export async function addItemToCart(data: CartItem) {
           ...calcPrice(cart.items as CartItem[]),
         },
       });
+
       //Revalidate patch
       revalidatePath("/product/" + product.slug);
 
@@ -163,7 +171,7 @@ export async function removeItemFromCart(productId: string) {
     if (!exist) throw new Error("Item not found");
 
     //check if only one item is in cart
-    if (exist.quantity === 1) {
+    if (exist.qty === 1) {
       //remove from cart
       cart.items = (cart.items as CartItem[]).filter(
         (x) => x.productId !== exist.productId
@@ -172,7 +180,7 @@ export async function removeItemFromCart(productId: string) {
       //decrease quantity
       (cart.items as CartItem[]).find(
         (x) => x.productId === productId
-      )!.quantity = exist.quantity - 1;
+      )!.qty = exist.qty - 1;
     }
     //Update db
     await prisma.cart.update({
