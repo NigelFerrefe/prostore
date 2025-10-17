@@ -1,4 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { auth } from "@/auth";
+import { deleteOrder, getAllOrders } from "@/lib/actions/order.actions";
+import { requireAdmin } from "@/lib/auth-guard";
+import { Metadata } from "next";
 import Pagination from "@/components/ui/shared/pagination";
 import {
   Table,
@@ -8,19 +11,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getMyOrders } from "@/lib/actions/order.actions";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import DeleteDialog from "@/components/ui/shared/delete-dialog"
 
-export const metadata = {
-  title: "My Orders",
+export const metadata: Metadata = {
+  title: "Admin Orders",
 };
 
-const OrdersPage = async (props: {
+const AdminOrdersPage = async (props: {
   searchParams: Promise<{ page: string }>;
 }) => {
-  const { page } = await props.searchParams;
-  const orders = await getMyOrders({ page: Number(page) || 1 });
+  await requireAdmin();
+  const session = await auth();
+  if (session?.user?.role !== "admin") {
+    throw new Error("User is not authorized");
+  }
+  const { page = "1" } = await props.searchParams;
+  const orders = await getAllOrders({ page: Number(page) });
 
   return (
     <div className="space-y-2">
@@ -61,6 +70,7 @@ const OrdersPage = async (props: {
                      Details
                     </Link>
                   </Button>
+                  <DeleteDialog id={order.id} action={deleteOrder}/>
                 </TableCell>
               </TableRow>
             ))}
@@ -74,4 +84,4 @@ const OrdersPage = async (props: {
   );
 };
 
-export default OrdersPage;
+export default AdminOrdersPage;
