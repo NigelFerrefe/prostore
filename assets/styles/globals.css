@@ -103,3 +103,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Uploading button text override*/
+
+html.dark .upload-field .text-white {
+  color: #fff !important
+}
+html.light .upload-field .text-white {
+  color: #000 !important
+}
