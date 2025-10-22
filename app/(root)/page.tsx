@@ -1,26 +1,29 @@
-/* 
-NEW METHOD TO OVERWRITE METADATA LIKE TITTLE
 import type { Metadata } from "next";
+import ProductList from "@/components/ui/shared/product/product-list";
+import {
+  getLatestProducts,
+  getFeaturedProducts,
+} from "@/lib/actions/product.actions";
+import ProductCarousel from "@/components/ui/shared/product/product.carousel";
+import ViewAllProductsBtn from "@/components/view-all-products-btn";
 
 export const metadata: Metadata = {
-  title: "Home" 
-}; */
-import ProductList from "@/components/ui/shared/product/product-list";
-import { getLatestProducts } from "@/lib/actions/product.actions";
+  title: "Home",
+};
 
 const Homepage = async () => {
   const latestProducts = await getLatestProducts();
-  const mappedProducts = latestProducts.map((product) => ({
-    ...product,
-    price: product.price.toString(),
-    createdAt: product.createdAt,
-    rating:
-      typeof product.rating === "number"
-        ? product.rating
-        : Number(product.rating), // ensure rating is a number
-  }));
+
+  const featuredProducts = await getFeaturedProducts();
+
   return (
-    <ProductList data={mappedProducts} title="Newest Arrivals" limit={4} />
+    <>
+      {featuredProducts.length > 0 && (
+        <ProductCarousel data={featuredProducts} />
+      )}
+      <ProductList data={latestProducts} title="Newest Arrivals" limit={4} />
+      <ViewAllProductsBtn />
+    </>
   );
 };
 

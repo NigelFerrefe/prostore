@@ -13,7 +13,7 @@ import {
 export type Product = z.infer<typeof insertProductSchema> & {
   //Next value are not in the schema
   id: string;
-  rating: number;
+  rating: string;
   createdAt: Date;
 };
 
