@@ -8,16 +8,16 @@ import {
   insertOrderItemSchema,
   paymentResultSchema,
   updateProfileSchema,
+  insertReviewSchema,
 } from "@/lib/validators";
 
 export type Product = z.infer<typeof insertProductSchema> & {
   //Next value are not in the schema
   id: string;
   rating: string;
+  numReviews: number;
   createdAt: Date;
 };
-
-
 
 export type Cart = z.infer<typeof insertCartSchema>;
 export type CartItem = z.infer<typeof cartItemSchema>;
@@ -35,3 +35,8 @@ export type Order = z.infer<typeof insertOrderSchema> & {
 };
 
 export type PaymentResult = z.infer<typeof paymentResultSchema>;
+export type Review = z.infer<typeof insertReviewSchema> & {
+  id: string;
+  createdAt: Date;
+  user?: { name: string };
+};
