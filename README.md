@@ -77,15 +77,6 @@ cd prostore
 # Install dependencies
 npm install
 
-# Copy the environment variables template
-cp .env.example .env.local
-
-# Generate Prisma client
-npx prisma generate
-
-# Run database migrations
-npx prisma migrate dev
-
 # Start the development server
 npm run dev
 
