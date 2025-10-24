@@ -6,6 +6,8 @@ import {
 } from "@/lib/actions/product.actions";
 import ProductCarousel from "@/components/ui/shared/product/product.carousel";
 import ViewAllProductsBtn from "@/components/view-all-products-btn";
+import IconBoxes from "@/components/icon-boxes";
+import DealCountDown from "@/components/deal-countdown";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -23,6 +25,9 @@ const Homepage = async () => {
       )}
       <ProductList data={latestProducts} title="Newest Arrivals" limit={4} />
       <ViewAllProductsBtn />
+      <DealCountDown />
+      <IconBoxes />
+
     </>
   );
 };

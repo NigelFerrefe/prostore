@@ -16,3 +16,4 @@ export const sendPurchaseReceipt = async ({ order }: { order: Order }) => {
     react: <PurchaseReceiptEmail order={order} />,
   });
 };
+
